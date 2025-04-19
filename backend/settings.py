@@ -80,10 +80,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'your_db_name'),
-        'USER': os.environ.get('POSTGRES_USER', 'your_db_user'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'your_db_password'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'NAME': os.environ.get('POSTGRES_DB', 'your_database'),
+        'USER': os.environ.get('POSTGRES_USER', 'your_username'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'your_password'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'postgres'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
@@ -161,6 +161,7 @@ LOGOUT_URL = '/logout/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:6379",
+    "*"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
