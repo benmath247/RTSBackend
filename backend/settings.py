@@ -161,8 +161,9 @@ LOGOUT_URL = '/logout/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:6379",
-    "*"
 ]
+
+CORS_ALL_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
