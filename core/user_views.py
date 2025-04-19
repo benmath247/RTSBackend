@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from django.contrib.auth import get_user_model, authenticate, login
 import logging
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CreateUserSerializer
 from django.contrib.auth import logout
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,8 @@ class CurrentUserView(RetrieveAPIView):
         self.permission_denied(self.request, message="Not authenticated")
 
 class CreateUserView(CreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = CreateUserSerializer
+
 
 class EditUserView(UpdateAPIView):
     serializer_class = UserSerializer

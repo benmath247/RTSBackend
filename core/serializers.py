@@ -18,11 +18,25 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'bio', 'birth_date', 'groups', 'user_permissions', 'profile_picture']
 
+    
+class CreateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"
+        read_only_fields = ['id', 'groups', 'user_permissions']
+        extra_kwargs = {'password': {'write_only': True}}
+
     def create(self, validated_data):
+        email = validated_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("Email already exists")
         groups = validated_data.pop('groups', None)
         user_permissions = validated_data.pop('user_permissions', None)
-        user = User.objects.create_user(**validated_data)
         
+    
+        user = User.objects.create_user(**validated_data)
+        user.is_active = True
+        user.save()
         if groups:
             user.groups.set(groups)
         if user_permissions:
