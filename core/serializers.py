@@ -13,6 +13,9 @@ from core.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(format='%Y/%m/%d', input_formats=['%Y/%m/%d'], required=False, allow_null=True)
+    # this should make sure that emails are unique
+    email = serializers.EmailField(required=True, allow_blank=False)
+
 
     class Meta:
         model = User

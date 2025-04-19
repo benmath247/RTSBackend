@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from core.factories import UserFactory, FavoriteStockFactory
-from core.models import User, FavoriteStock
-from unittest.mock import patch
+from core.factories import UserFactory
+from core.models import User
+
 
 class CurrentUserViewTest(TestCase):
     def setUp(self):
@@ -105,24 +105,27 @@ class EditUserDetailsViewTest(TestCase):
         response = self.client.patch(reverse('edit_user'), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-class StockPriceViewTest(TestCase):
-    def setUp(self):
-        self.client = APIClient()
 
-    def test_get_stock_price_success(self):
-        ticker = 'AAPL'
-        response = self.client.get(reverse('stock_data'), {'ticker': ticker})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('c', response.data)
-        self.assertIn('d', response.data)
-        self.assertIn('dp', response.data)
-        self.assertIn('h', response.data)
-        self.assertIn('o', response.data)
-        self.assertIn('pc', response.data)
-        self.assertIn('t', response.data)
+# finnhub disabled my account when I run these tests
+
+# class StockPriceViewTest(TestCase):
+#     def setUp(self):
+#         self.client = APIClient()
+
+#     def test_get_stock_price_success(self):
+#         ticker = 'AAPL'
+#         response = self.client.get(reverse('stock_data'), {'ticker': ticker})
+#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+#         self.assertIn('c', response.data)
+#         self.assertIn('d', response.data)
+#         self.assertIn('dp', response.data)
+#         self.assertIn('h', response.data)
+#         self.assertIn('o', response.data)
+#         self.assertIn('pc', response.data)
+#         self.assertIn('t', response.data)
 
 
-    def test_get_stock_price_missing_ticker(self):
-        response = self.client.get(reverse('stock_data'))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Ticker is required', str(response.data))
+#     def test_get_stock_price_missing_ticker(self):
+#         response = self.client.get(reverse('stock_data'))
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertIn('Ticker is required', str(response.data))

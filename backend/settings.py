@@ -163,7 +163,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:6379",
 ]
 
-CORS_ALL_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
