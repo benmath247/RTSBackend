@@ -60,40 +60,69 @@ class EditUserViewTest(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.bio, 'Updated bio')
 
-class FavoriteStockCreateViewTest(TestCase):
+class RegisterUserViewTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = UserFactory()
-        self.client.force_authenticate(user=self.user)
 
-    def test_create_favorite_stock(self):
-        user = UserFactory()
-        payload = {'stock_symbol': 'AAPL', 'user': user.id}
-        response = self.client.post(reverse('favorite-stock-create'), payload)
+    def test_register_user_success(self):
+        payload = {
+            'username': 'testuser',
+            'email': 'testuser@example.com',
+            'password': 'testpassword123'
+        }
+        response = self.client.post(reverse('create_user'), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(FavoriteStock.objects.filter(user=self.user, stock_symbol='AAPL').exists())
+        self.assertTrue(User.objects.filter(email='testuser@example.com').exists())
 
-    def test_create_favorite_stock_unauthenticated(self):
-        self.client.force_authenticate(user=None)
-        payload = {'stock_symbol': 'AAPL'}
-        response = self.client.post(reverse('favorite-stock-create'), payload)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_register_user_duplicate_email(self):
+        UserFactory(email='duplicate@example.com')
+        payload = {
+            'username': 'newuser',
+            'email': 'duplicate@example.com',
+            'password': 'password123'
+        }
+        response = self.client.post(reverse('create_user'), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Email already exists', str(response.data))
 
-class FavoriteStockDeleteViewTest(TestCase):
+class EditUserDetailsViewTest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = UserFactory()
         self.client.force_authenticate(user=self.user)
 
-    def test_delete_favorite_stock(self):
-        favorite_stock = FavoriteStockFactory(user=self.user)
-        response = self.client.delete(reverse('favorite-stock-delete', args=[favorite_stock.id]))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(FavoriteStock.objects.filter(id=favorite_stock.id).exists())
+    def test_edit_user_details_success(self):
+        payload = {'bio': 'Updated bio', 'birth_date': '1990/01/01'}
+        response = self.client.patch(reverse('edit_user'), payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.bio, 'Updated bio')
+        self.assertEqual(self.user.birth_date.strftime('%Y/%m/%d'), '1990/01/01')
 
-    def test_delete_favorite_stock_unauthenticated(self):
-        favorite_stock = FavoriteStockFactory(user=self.user)
+    def test_edit_user_details_unauthenticated(self):
         self.client.force_authenticate(user=None)
-        response = self.client.delete(reverse('favorite-stock-delete', args=[favorite_stock.id]))
+        payload = {'bio': 'Updated bio'}
+        response = self.client.patch(reverse('edit_user'), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+class StockPriceViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_get_stock_price_success(self):
+        ticker = 'AAPL'
+        response = self.client.get(reverse('stock_data'), {'ticker': ticker})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('c', response.data)
+        self.assertIn('d', response.data)
+        self.assertIn('dp', response.data)
+        self.assertIn('h', response.data)
+        self.assertIn('o', response.data)
+        self.assertIn('pc', response.data)
+        self.assertIn('t', response.data)
+
+
+    def test_get_stock_price_missing_ticker(self):
+        response = self.client.get(reverse('stock_data'))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Ticker is required', str(response.data))
