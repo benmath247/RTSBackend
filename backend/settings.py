@@ -78,29 +78,15 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.environ.get("POSTGRES_DB", "your_database"),
-#         "USER": os.environ.get("POSTGRES_USER", "your_username"),
-#         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "your_password"),
-#         "HOST": os.environ.get("POSTGRES_HOST", "postgres"),
-#         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
-#     }
-# }
-
 DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'HOST': os.environ.get('STACKHERO_POSTGRESQL_HOST'),
-    'PORT': os.environ.get('STACKHERO_POSTGRESQL_PORT'),
-    'OPTIONS': {
-      'sslmode': 'require',
-    },
-    'NAME': 'admin',
-    'USER': 'admin',
-    'PASSWORD': os.environ.get('STACKHERO_POSTGRESQL_ADMIN_PASSWORD')
-  }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "your_database"),
+        "USER": os.environ.get("POSTGRES_USER", "your_username"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "your_password"),
+        "HOST": os.environ.get("POSTGRES_HOST", "postgres"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+    }
 }
 
 # Password validation
