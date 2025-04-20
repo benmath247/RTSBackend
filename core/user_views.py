@@ -11,6 +11,7 @@ from django.contrib.auth import logout
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
+
 class CurrentUserView(RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
@@ -25,6 +26,7 @@ class CurrentUserView(RetrieveAPIView):
                 self.permission_denied(self.request, message="User not found")
         self.permission_denied(self.request, message="Not authenticated")
 
+
 class CreateUserView(CreateAPIView):
     serializer_class = CreateUserSerializer
 
@@ -36,20 +38,21 @@ class EditUserView(UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+
 class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         logout(request)
-        return Response({'message': 'Logged out successfully'}, status=200)
+        return Response({"message": "Logged out successfully"}, status=200)
+
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get('username')
-        password = request.data.get('password')
+        email = request.data.get("username")
+        password = request.data.get("password")
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
-            return Response({'message': 'Login successful'}, status=HTTP_200_OK)
-        return Response({'error': 'Invalid credentials'}, status=HTTP_400_BAD_REQUEST)
-
+            return Response({"message": "Login successful"}, status=HTTP_200_OK)
+        return Response({"error": "Invalid credentials"}, status=HTTP_400_BAD_REQUEST)

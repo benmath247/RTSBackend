@@ -13,14 +13,15 @@ class CurrentUserViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_get_current_user_authenticated(self):
-        response = self.client.get(reverse('current_user'))
+        response = self.client.get(reverse("current_user"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['email'], self.user.email)
+        self.assertEqual(response.data["email"], self.user.email)
 
     def test_get_current_user_unauthenticated(self):
         self.client.force_authenticate(user=None)
-        response = self.client.get(reverse('current_user'))
+        response = self.client.get(reverse("current_user"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class LogoutViewTest(TestCase):
     def setUp(self):
@@ -29,9 +30,10 @@ class LogoutViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_logout_authenticated_user(self):
-        response = self.client.post(reverse('logout'))
+        response = self.client.post(reverse("logout"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['message'], 'Logged out successfully')
+        self.assertEqual(response.data["message"], "Logged out successfully")
+
 
 class CreateUserViewTest(TestCase):
     def setUp(self):
@@ -39,13 +41,14 @@ class CreateUserViewTest(TestCase):
 
     def test_create_user(self):
         payload = {
-            'username': 'newuser',
-            'email': 'newuser@example.com',
-            'password': 'password123'
+            "username": "newuser",
+            "email": "newuser@example.com",
+            "password": "password123",
         }
-        response = self.client.post(reverse('create_user'), payload)
+        response = self.client.post(reverse("create_user"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(User.objects.filter(email='newuser@example.com').exists())
+        self.assertTrue(User.objects.filter(email="newuser@example.com").exists())
+
 
 class EditUserViewTest(TestCase):
     def setUp(self):
@@ -54,11 +57,12 @@ class EditUserViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_edit_user(self):
-        payload = {'bio': 'Updated bio'}
-        response = self.client.patch(reverse('edit_user'), payload)
+        payload = {"bio": "Updated bio"}
+        response = self.client.patch(reverse("edit_user"), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.bio, 'Updated bio')
+        self.assertEqual(self.user.bio, "Updated bio")
+
 
 class RegisterUserViewTest(TestCase):
     def setUp(self):
@@ -66,24 +70,25 @@ class RegisterUserViewTest(TestCase):
 
     def test_register_user_success(self):
         payload = {
-            'username': 'testuser',
-            'email': 'testuser@example.com',
-            'password': 'testpassword123'
+            "username": "testuser",
+            "email": "testuser@example.com",
+            "password": "testpassword123",
         }
-        response = self.client.post(reverse('create_user'), payload)
+        response = self.client.post(reverse("create_user"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(User.objects.filter(email='testuser@example.com').exists())
+        self.assertTrue(User.objects.filter(email="testuser@example.com").exists())
 
     def test_register_user_duplicate_email(self):
-        UserFactory(email='duplicate@example.com')
+        UserFactory(email="duplicate@example.com")
         payload = {
-            'username': 'newuser',
-            'email': 'duplicate@example.com',
-            'password': 'password123'
+            "username": "newuser",
+            "email": "duplicate@example.com",
+            "password": "password123",
         }
-        response = self.client.post(reverse('create_user'), payload)
+        response = self.client.post(reverse("create_user"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Email already exists', str(response.data))
+        self.assertIn("Email already exists", str(response.data))
+
 
 class EditUserDetailsViewTest(TestCase):
     def setUp(self):
@@ -92,17 +97,17 @@ class EditUserDetailsViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_edit_user_details_success(self):
-        payload = {'bio': 'Updated bio', 'birth_date': '1990/01/01'}
-        response = self.client.patch(reverse('edit_user'), payload)
+        payload = {"bio": "Updated bio", "birth_date": "1990/01/01"}
+        response = self.client.patch(reverse("edit_user"), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.bio, 'Updated bio')
-        self.assertEqual(self.user.birth_date.strftime('%Y/%m/%d'), '1990/01/01')
+        self.assertEqual(self.user.bio, "Updated bio")
+        self.assertEqual(self.user.birth_date.strftime("%Y/%m/%d"), "1990/01/01")
 
     def test_edit_user_details_unauthenticated(self):
         self.client.force_authenticate(user=None)
-        payload = {'bio': 'Updated bio'}
-        response = self.client.patch(reverse('edit_user'), payload)
+        payload = {"bio": "Updated bio"}
+        response = self.client.patch(reverse("edit_user"), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 

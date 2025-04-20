@@ -3,6 +3,7 @@ from rest_framework import permissions
 from .models import FavoriteStock
 from .serializers import FavoriteStockSerializer
 
+
 class FavoriteStockListView(ListAPIView):
     serializer_class = FavoriteStockSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -10,12 +11,14 @@ class FavoriteStockListView(ListAPIView):
     def get_queryset(self):
         return FavoriteStock.objects.filter(user=self.request.user)
 
+
 class FavoriteStockCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FavoriteStockSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 
 class FavoriteStockDeleteView(DestroyAPIView):
     serializer_class = FavoriteStockSerializer
