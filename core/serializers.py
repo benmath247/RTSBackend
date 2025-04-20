@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FavoriteStock
+from .models import FavoriteStock, User
 
 
 class FavoriteStockSerializer(serializers.ModelSerializer):
@@ -7,10 +7,6 @@ class FavoriteStockSerializer(serializers.ModelSerializer):
         model = FavoriteStock
         fields = ["id", "user", "stock_symbol", "added_on"]
         read_only_fields = ["id", "added_on"]
-
-
-from rest_framework import serializers
-from core.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):

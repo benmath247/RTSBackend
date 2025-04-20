@@ -7,11 +7,11 @@ from core.user_views import (
     LoginView,
 )
 from core.stock_views import StockDataView, StockPriceView
-# from core.stock_views import (
-#     FavoriteStockListView,
-#     FavoriteStockCreateView,
-#     FavoriteStockDeleteView,
-# )
+from core.favorite_views import (
+    FavoriteStockListView,
+    FavoriteStockCreateView,
+    FavoriteStockDeleteView,
+)
 
 
 urlpatterns = [
@@ -22,7 +22,17 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("stock-data/", StockDataView.as_view(), name="stock_data"),
     path("stock-price/", StockPriceView.as_view(), name="stock_data"),
-    # path('favorite-stocks/', FavoriteStockListView.as_view(), name='favorite-stock-list'),
-    # path('favorite-stocks/create/', FavoriteStockCreateView.as_view(), name='favorite-stock-create'),
-    # path('favorite-stocks/<int:pk>/delete/', FavoriteStockDeleteView.as_view(), name='favorite-stock-delete'),
+    path(
+        "favorite-stocks/", FavoriteStockListView.as_view(), name="favorite-stock-list"
+    ),
+    path(
+        "favorite-stocks/create/",
+        FavoriteStockCreateView.as_view(),
+        name="favorite-stock-create",
+    ),
+    path(
+        "favorite-stocks/<int:pk>/delete/",
+        FavoriteStockDeleteView.as_view(),
+        name="favorite-stock-delete",
+    ),
 ]

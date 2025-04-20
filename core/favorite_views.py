@@ -9,7 +9,7 @@ class FavoriteStockListView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return FavoriteStock.objects.filter(user=self.request.user)
+        return FavoriteStock.objects.filter(user=self.request.user).order_by("-added_on")  # Order by added_on descending
 
 
 class FavoriteStockCreateView(CreateAPIView):

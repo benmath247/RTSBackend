@@ -2,8 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from core.factories import UserFactory
-from core.models import User
+from core.factories import UserFactory, FavoriteStockFactory
+from core.models import User, FavoriteStock
+from core.serializers import FavoriteStockSerializer
 
 
 class CurrentUserViewTest(TestCase):
@@ -134,3 +135,117 @@ class EditUserDetailsViewTest(TestCase):
 #         response = self.client.get(reverse('stock_data'))
 #         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 #         self.assertIn('Ticker is required', str(response.data))
+
+
+class FavoriteStockSerializerTest(TestCase):
+    def test_favorite_stock_serializer(self):
+        user = UserFactory()
+        favorite_stock = FavoriteStockFactory(user=user)
+        serializer = FavoriteStockSerializer(favorite_stock)
+        self.assertEqual(serializer.data["stock_symbol"], favorite_stock.stock_symbol)
+        self.assertEqual(serializer.data["user"], user.id)
+
+
+class FavoriteStockFactoryTest(TestCase):
+    def test_favorite_stock_factory(self):
+        favorite_stock = FavoriteStockFactory()
+        self.assertIsInstance(favorite_stock, FavoriteStock)
+        self.assertIsNotNone(favorite_stock.user)
+        self.assertIsNotNone(favorite_stock.stock_symbol)
+
+
+class FavoriteStockListViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+        self.favorite_stock = FavoriteStockFactory(user=self.user)
+
+    def test_get_favorite_stocks(self):
+        response = self.client.get(reverse("favorite-stock-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(
+            response.data["results"][0]["stock_symbol"],
+            self.favorite_stock.stock_symbol,
+        )
+
+    def test_get_favorite_stocks_unauthenticated(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.get(reverse("favorite-stock-list"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class FavoriteStockCreateViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_favorite_stock(self):
+        payload = {
+            "stock_symbol": "AAPL",
+            "user": self.user.id,
+        }
+        response = self.client.post(reverse("favorite-stock-create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            FavoriteStock.objects.filter(stock_symbol="AAPL", user=self.user).exists()
+        )
+
+    def test_create_favorite_stock_unauthenticated(self):
+        self.client.force_authenticate(user=None)
+        payload = {"stock_symbol": "AAPL"}
+        response = self.client.post(reverse("favorite-stock-create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class FavoriteStockDeleteViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+        self.favorite_stock = FavoriteStockFactory(user=self.user)
+
+    def test_delete_favorite_stock(self):
+        response = self.client.delete(
+            reverse("favorite-stock-delete", args=[self.favorite_stock.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            FavoriteStock.objects.filter(id=self.favorite_stock.id).exists()
+        )
+
+    def test_delete_favorite_stock_unauthenticated(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.delete(
+            reverse("favorite-stock-delete", args=[self.favorite_stock.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_favorite_stock_not_found(self):
+        response = self.client.delete(reverse("favorite-stock-delete", args=[999]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_favorite_stock_not_owned(self):
+        other_user = UserFactory()
+        other_favorite_stock = FavoriteStockFactory(user=other_user)
+        response = self.client.delete(
+            reverse("favorite-stock-delete", args=[other_favorite_stock.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_favorite_stock_invalid_id(self):
+        response = self.client.delete(reverse("favorite-stock-delete", args=[999]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_favorite_stock_no_id(self):
+        response = self.client.delete(reverse("favorite-stock-delete", args=[999]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_favorite_stock_no_auth(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.delete(
+            reverse("favorite-stock-delete", args=[self.favorite_stock.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
