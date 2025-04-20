@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-1+(5p-e%k7_b#o@o!h-n=wb(4li6%lt2fkz5mrdeu1aq@y36!e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv("REACT_APP_BACKEND", "localhost")]
+ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST", "localhost")]
 
 
 # Application definition
@@ -151,28 +151,28 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_ARGUMENTS = {
     "prompt": "consent",
 }
 SOCIAL_AUTH_URL_NAMESPACE = "social"
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = f"http://{os.getenv("REACT_APP_BACKEND")}:3000/"
-SOCIAL_AUTH_LOGIN_ERROR_URL = f"http://{os.getenv("REACT_APP_BACKEND")}:3000/"
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = f"http://{os.getenv("REACT_APP_BACKEND")}:3000/"
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = f"http://{os.getenv("ALLOWED_HOST")}:3000/"
+SOCIAL_AUTH_LOGIN_ERROR_URL = f"http://{os.getenv("ALLOWED_HOST")}:3000/"
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = f"http://{os.getenv("ALLOWED_HOST")}:3000/"
 SOCIAL_AUTH_NEW_USER_SEND_EMAIL = False
 
 AUTH_USER_MODEL = "core.User"
 
 LOGIN_URL = "/auth/login/google-oauth2/"
-LOGIN_REDIRECT_URL = f"http://{os.getenv("REACT_APP_BACKEND")}:3000/"
-LOGOUT_REDIRECT_URL = f"http://{os.getenv("REACT_APP_BACKEND")}:3000/"
+LOGIN_REDIRECT_URL = f"http://{os.getenv("ALLOWED_HOST")}:3000/"
+LOGOUT_REDIRECT_URL = f"http://{os.getenv("ALLOWED_HOST")}:3000/"
 LOGOUT_URL = "/logout/"
 
 CORS_ALLOWED_ORIGINS = [
-    f"http://{os.getenv("REACT_APP_BACKEND")}:3000",
-    f"http://{os.getenv("REACT_APP_BACKEND")}:6379",
+    f"http://{os.getenv("ALLOWED_HOST")}:3000",
+    f"http://{os.getenv("ALLOWED_HOST")}:6379",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    f"http://{os.getenv("REACT_APP_BACKEND")}:3000",
-    f"http://{os.getenv("REACT_APP_BACKEND")}:3000"
+    f"http://{os.getenv("ALLOWED_HOST")}:3000",
+    f"http://{os.getenv("ALLOWED_HOST")}:3000"
 ]
 
 CSRF_ALLOW_ALL_ORIGINS = True
