@@ -172,6 +172,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "http://100.26.107.52:3000"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
