@@ -175,6 +175,10 @@ CSRF_TRUSTED_ORIGINS = [
     "http://100.26.107.52:3000"
 ]
 
+CSRF_ALLOW_ALL_ORIGINS = True
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+
 CORS_ALLOW_CREDENTIALS = True
 
 MEDIA_URL = "/media/"
