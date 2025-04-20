@@ -9,7 +9,9 @@ class FavoriteStockListView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return FavoriteStock.objects.filter(user=self.request.user).order_by("-added_on")  # Order by added_on descending
+        return FavoriteStock.objects.filter(user=self.request.user).order_by(
+            "-added_on"
+        )  # Order by added_on descending
 
 
 class FavoriteStockCreateView(CreateAPIView):
@@ -29,7 +31,9 @@ class FavoriteStockDeleteView(DestroyAPIView):
         stock_symbol = self.kwargs.get("stock_symbol")
         if not stock_symbol:
             raise ValueError("Stock symbol is missing in the request.")
-        return FavoriteStock.objects.filter(user=self.request.user, stock_symbol=stock_symbol)
+        return FavoriteStock.objects.filter(
+            user=self.request.user, stock_symbol=stock_symbol
+        )
 
     def perform_destroy(self, instance):
         # Delete all matching records instead of relying on `get()`
