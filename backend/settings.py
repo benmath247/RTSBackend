@@ -177,7 +177,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 CSRF_ALLOW_ALL_ORIGINS = True
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 CORS_ALLOW_CREDENTIALS = True
 
