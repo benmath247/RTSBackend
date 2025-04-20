@@ -23,6 +23,14 @@ class FavoriteStockCreateView(CreateAPIView):
 class FavoriteStockDeleteView(DestroyAPIView):
     serializer_class = FavoriteStockSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "stock_symbol"
 
     def get_queryset(self):
-        return FavoriteStock.objects.filter(user=self.request.user)
+        stock_symbol = self.kwargs.get("stock_symbol")
+        if not stock_symbol:
+            raise ValueError("Stock symbol is missing in the request.")
+        return FavoriteStock.objects.filter(user=self.request.user, stock_symbol=stock_symbol)
+
+    def perform_destroy(self, instance):
+        # Delete all matching records instead of relying on `get()`
+        self.get_queryset().delete()

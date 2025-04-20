@@ -31,7 +31,7 @@ urlpatterns = [
         name="favorite-stock-create",
     ),
     path(
-        "favorite-stocks/<int:pk>/delete/",
+        "favorite-stocks/delete/<str:stock_symbol>/",
         FavoriteStockDeleteView.as_view(),
         name="favorite-stock-delete",
     ),

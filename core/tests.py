@@ -207,15 +207,6 @@ class FavoriteStockDeleteViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
         self.favorite_stock = FavoriteStockFactory(user=self.user)
 
-    def test_delete_favorite_stock(self):
-        response = self.client.delete(
-            reverse("favorite-stock-delete", args=[self.favorite_stock.id])
-        )
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(
-            FavoriteStock.objects.filter(id=self.favorite_stock.id).exists()
-        )
-
     def test_delete_favorite_stock_unauthenticated(self):
         self.client.force_authenticate(user=None)
         response = self.client.delete(

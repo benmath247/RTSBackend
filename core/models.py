@@ -23,5 +23,8 @@ class FavoriteStock(models.Model):
     stock_symbol = models.CharField(max_length=10)
     added_on = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ("user", "stock_symbol")  # Ensure uniqueness for user and stock_symbol
+
     def __str__(self):
         return self.stock_symbol
